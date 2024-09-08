@@ -1,5 +1,7 @@
 # Map Joiner
 
+<a href = "https://technoid99.github.io/map-joiner/">CLICK HERE TO ACCESS MAP JOINER</a>
+
 This tool splits an image in two and joins it's original outer vertical edges together.
 The original use case for this script was to make Australia and the Pacific the centre of world maps when using QGIS.
 
