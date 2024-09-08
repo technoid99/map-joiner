@@ -1,7 +1,7 @@
 # Map Joiner
 
 This tool splits an image in two and joins it's original outer vertical edges together.
-The original use case for this script was to make Australia and the Pacific the centre of a world map
+The original use case for this script was to make Australia and the Pacific the centre of world maps when using QGIS.
 
 ### Original map
 
