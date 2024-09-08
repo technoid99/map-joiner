@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Joiner - Make Australia and the Pacific the centre of the world</title>
+</head>
+<body>
+    <h1>Map Joiner</h1>
+    <p>This tool splits an image in two and joins it's original outer vertical edges together. <br>
+    The original use case for this script was to make Australia and the Pacific the centre of a world map <br>
+    Click the Download Image link at the bottom to download the result.</p>
+    <h2>Upload an image</h2>
+    <P><input type="file" id="imageUpload" accept="image/*"></P>
+    <canvas id="canvas"></canvas><br><br>
+    <a id="downloadLink" download="split_joined_image.png">Download Image</a>
+
+    <script>
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.getElementById('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    const halfWidth = img.width / 2;
+
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    // Draw the right half of the image on the left
+                    ctx.drawImage(img, halfWidth, 0, halfWidth, img.height, 0, 0, halfWidth, img.height);
+
+                    // Draw the left half of the image on the right
+                    ctx.drawImage(img, 0, 0, halfWidth, img.height, halfWidth, 0, halfWidth, img.height);
+
+                    // Enable download
+                    const downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = canvas.toDataURL('image/png');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>
