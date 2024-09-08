@@ -5,8 +5,8 @@ The original use case for this script was to make Australia and the Pacific the 
 
 ### Original map
 
-![original map](https://github.com/technoid99/map-joiner/blob/main/map1.jpg?raw=true)
+![original map](https://github.com/technoid99/map-joiner/blob/main/map1.png?raw=true)
 
 ### New map with Australia at the centre of the world.
 
-![map with Australia at the centre](https://github.com/technoid99/map-joiner/blob/main/map2.jpg?raw=true)
+![map with Australia at the centre](https://github.com/technoid99/map-joiner/blob/main/map2.png?raw=true)
