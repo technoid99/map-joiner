@@ -1,9 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map Joiner - Make Australia and the Pacific the centre of the world</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map Joiner - Make Australia and the Pacific the centre of the world</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      background: #fafafa;
+      color: #222;
+      margin: 0;
+      padding: 2em;
+    }
+    h1 {
+      margin-bottom: 0.5em;
+    }
+    input[type="file"] {
+      margin-bottom: 1em;
+    }
+    canvas {
+      display: block;
+      margin: 1em auto;
+      border: 1px solid #ccc;
+      max-width: 95%;
+      height: auto;
+    }
+    button, a {
+      margin: 0.5em;
+      padding: 0.6em 1.2em;
+      border: none;
+      background: #007acc;
+      color: white;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    button:hover, a:hover {
+      background: #005f99;
+    }
+  </style>
 </head>
 <body>
     <h1>Map Joiner</h1>
@@ -11,41 +49,58 @@
     The original use case for this script was to make Australia and the Pacific the centre of a world map <br>
     Click the Download Image link at the bottom to download the result.</p>
     <h2>Upload an image</h2>
-    <P><input type="file" id="imageUpload" accept="image/*"></P>
-    <canvas id="canvas"></canvas><br><br>
-    <a id="downloadLink" download="split_joined_image.png">Download Image</a>
+  <input type="file" id="upload" accept="image/*">
+  <br>
+  <a id="download" href="#" download="swapped.png" style="display:none;">Download Image</a>
+  <br>
+  <canvas id="canvas"></canvas>
+  <br>
+  
+  <script>
+    const upload = document.getElementById('upload');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const downloadLink = document.getElementById('download');
+    let img = new Image();
 
-    <script>
-        document.getElementById('imageUpload').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+    // Load image
+    upload.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          
+          // Automatically swap halves
+          const w = canvas.width;
+          const h = canvas.height;
+          const half = Math.floor(w / 2);
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.getElementById('canvas');
-                    const ctx = canvas.getContext('2d');
+          const left = ctx.getImageData(0, 0, half, h);
+          const right = ctx.getImageData(half, 0, half, h);
 
-                    const halfWidth = img.width / 2;
+          ctx.putImageData(right, 0, 0);
+          ctx.putImageData(left, half, 0);
 
-                    canvas.width = img.width;
-                    canvas.height = img.height;
+          // Create download filename from original
+          const originalName = file.name;
+          const lastDot = originalName.lastIndexOf('.');
+          const nameWithoutExt = lastDot > 0 ? originalName.substring(0, lastDot) : originalName;
+          const ext = lastDot > 0 ? originalName.substring(lastDot) : '.png';
+          const newFilename = nameWithoutExt + '_swapped' + ext;
 
-                    // Draw the right half of the image on the left
-                    ctx.drawImage(img, halfWidth, 0, halfWidth, img.height, 0, 0, halfWidth, img.height);
-
-                    // Draw the left half of the image on the right
-                    ctx.drawImage(img, 0, 0, halfWidth, img.height, halfWidth, 0, halfWidth, img.height);
-
-                    // Enable download
-                    const downloadLink = document.getElementById('downloadLink');
-                    downloadLink.href = canvas.toDataURL('image/png');
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-    </script>
+          // Enable download
+          downloadLink.href = canvas.toDataURL('image/png');
+          downloadLink.download = newFilename;
+          downloadLink.style.display = 'inline-block';
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
 </body>
 </html>
